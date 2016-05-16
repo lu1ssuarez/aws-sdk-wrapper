@@ -1,13 +1,13 @@
 <?php
     
-    namespace Lu1sSuarez\AWS\Http\Controller;
+    namespace Lu1sSuarez\AWS;
 
     use Illuminate\Support\Facades\Config;
 
     /**
      * Class Route53
      *
-     * @package Lu1sSuarez\AWS\Http\Controller
+     * @package Lu1sSuarez\AWS
      */
     class Route53 {
 
