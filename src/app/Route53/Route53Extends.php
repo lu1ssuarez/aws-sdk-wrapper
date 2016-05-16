@@ -43,4 +43,17 @@
             return $servers;
         }
 
+        public function parse_resource_record($tag) {
+            $rrs                    = [];
+            $rrs['Name']            = (string)$tag->Name;
+            $rrs['Type']            = (string)$tag->Type;
+            $rrs['TTL']             = (string)$tag->TTL;
+            $rrs['ResourceRecords'] = [];
+            foreach ($tag->ResourceRecords->ResourceRecord as $rr) {
+                $rrs['ResourceRecords'][] = (string)$rr->Value;
+            }
+
+            return $rrs;
+        }
+
     }

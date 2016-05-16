@@ -109,6 +109,60 @@
             return $response;
         }
 
+        public function get_domains($id, $type = '', $name = '', $maxItems = 100) {
+            $request = new Request($this, trim($id, '/') . '/rrset', 'GET');
+
+            if (strlen($type) > 0) {
+                $request->set_parameter('type', $type);
+            }
+            if (strlen($name) > 0) {
+                $request->set_parameter('name', $name);
+            }
+            if ($maxItems != 100) {
+                $request->set_parameter('maxitems', $maxItems);
+            }
+
+            $request = $request->response();
+            
+            if ($request->error === false && $request->code !== 200) {
+                $request->error = [
+                    'code'    => $request->code,
+                    'message' => 'Unexpected HTTP status',
+                ];
+            }
+
+            if ($request->error !== false) {
+                $this->__triggerError('get_domains', $request->error);
+
+                return false;
+            }
+
+            $response = [];
+            if (!isset($request->body)) {
+                return $response;
+            }
+
+            $recordSets = [];
+            foreach ($request->body->ResourceRecordSets->ResourceRecordSet as $set) {
+                $recordSets[] = $this->parse_resource_record($set);
+            }
+            $response['ResourceRecordSets'] = $recordSets;
+
+            if (isset($request->body->MaxItems)) {
+                $response['MaxItems'] = (string)$request->body->MaxItems;
+            }
+
+            if (isset($request->body->IsTruncated)) {
+                $response['IsTruncated'] = (string)$request->body->IsTruncated;
+                if ($response['IsTruncated'] == 'true') {
+                    $response['NextRecordName'] = (string)$request->body->NextRecordName;
+                    $response['NextRecordType'] = (string)$request->body->NextRecordType;
+                }
+            }
+
+            return $response;
+        }
+
         public function get_host() { return $this->host; }
 
         public function get_access_key() { return $this->access_key; }
