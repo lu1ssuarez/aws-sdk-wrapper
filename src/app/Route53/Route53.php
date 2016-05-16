@@ -123,7 +123,7 @@
             }
 
             $request = $request->response();
-            
+
             if ($request->error === false && $request->code !== 200) {
                 $request->error = [
                     'code'    => $request->code,

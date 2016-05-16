@@ -56,4 +56,36 @@
             return $rrs;
         }
 
+        public function prepare($action, $name, $type, $ttl, $records) {
+            $change = "<Change>\n";
+            $change .= '<Action>' . $action . "</Action>\n";
+            $change .= "<ResourceRecordSet>\n";
+            $change .= '<Name>' . $name . "</Name>\n";
+            $change .= '<Type>' . $type . "</Type>\n";
+            $change .= '<TTL>' . $ttl . "</TTL>\n";
+            $change .= "<ResourceRecords>\n";
+
+            if (!is_array($records)) {
+                $records = [$records];
+            }
+
+            foreach ($records as $record) {
+                $change .= "<ResourceRecord>\n";
+                if (is_array($record)) {
+                    foreach ($record as $value) {
+                        $change .= '<Value>' . $value . "</Value>\n";
+                    }
+                } else {
+                    $change .= '<Value>' . $record . "</Value>\n";
+                }
+                $change .= "</ResourceRecord>\n";
+            }
+
+            $change .= "</ResourceRecords>\n";
+            $change .= "</ResourceRecordSet>\n";
+            $change .= "</Change>\n";
+
+            return $change;
+        }
+
     }
