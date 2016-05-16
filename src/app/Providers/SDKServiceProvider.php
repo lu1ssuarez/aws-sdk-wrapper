@@ -1,15 +1,19 @@
 <?php
+
     namespace Lu1sSuarez\AWS\Providers;
 
     use Illuminate\Foundation\Application as LaravelApplication;
     use Illuminate\Support\ServiceProvider;
     use Laravel\Lumen\Application as LumenApplication;
+    use Lu1sSuarez\AWS\Http\Controller\Route53;
+
 
     /**
-     * AWS SDK for PHP service provider for Laravel applications
+     * Class SDKServiceProvider
+     *
+     * @package Lu1sSuarez\AWS\Providers
      */
     class SDKServiceProvider extends ServiceProvider {
-        const VERSION = '3.1.0';
 
         /**
          * Indicates if loading of the provider is deferred.
@@ -24,7 +28,7 @@
          * @return void
          */
         public function boot() {
-            $source = realpath(__DIR__ . 'config/aws_sdk.php');
+            $source = realpath(__DIR__ . '/../../config/aws_sdk.php');
 
             if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
                 $this->publishes([$source => config_path('aws_sdk.php')]);
@@ -41,6 +45,10 @@
          * @return void
          */
         public function register() {
+            \App::bind('route53', function () {
+                return new Route53;
+            });
+
             $this->app->singleton('aws_sdk', function ($app) {
                 $config = $app->make('config')->get('aws_sdk');
 
