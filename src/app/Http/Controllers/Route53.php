@@ -22,7 +22,7 @@
          * @param null $access_key
          * @param null $secret_key
          */
-        public function __construct($access_key = null, $secret_key = null) {
+        public static function __construct($access_key = null, $secret_key = null) {
 
             self::$access_key = Config::get('aws_sdk.access_key', $access_key);
             self::$secret_key = Config::get('aws_sdk.secret_key', $secret_key);
