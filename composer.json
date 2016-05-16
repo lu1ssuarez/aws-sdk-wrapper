@@ -1,0 +1,42 @@
+{
+    "name": "lu1ssuarez/aws-sdk-wrapper",
+    "homepage": "https://developer.lu1ssuarez.com/git/aws-sdk-wrapper",
+    "description": "A simple AWS SDK for PHP.",
+    "keywords": [
+        "php",
+        "laravel",
+        "laravel 5",
+        "aws",
+        "amazon",
+        "sdk",
+        "s3",
+        "wrapper"
+    ],
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Luis Enrique Suárez",
+            "email": "im@lu1ssuarez.com",
+            "homepage": "https://lu1ssuarez.com/"
+        },
+        {
+            "name": "Amazon Web Services",
+            "homepage": "http://aws.amazon.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "aws/aws-sdk-php": "~3.0",
+        "illuminate/support": "~5.1"
+    },
+    "suggest": {
+        "laravel/framework": "To test the Laravel bindings",
+        "laravel/lumen-framework": "To test the Lumen bindings"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lu1sSuarez\\AWS\\": "src/app/"
+        }
+    }
+}
