@@ -34,4 +34,13 @@
             return $zone;
         }
 
+        public function parse_delegation_hz($tag) {
+            $servers = [];
+            foreach ($tag->NameServers->NameServer as $ns) {
+                $servers[] = (string)$ns;
+            }
+
+            return $servers;
+        }
+
     }

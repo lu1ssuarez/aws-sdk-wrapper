@@ -1,8 +1,7 @@
 <?php
 
     namespace Lu1sSuarez\AWS\Route53;
-
-
+    
     final class Request {
 
         private $route53;
