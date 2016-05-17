@@ -44,13 +44,25 @@
         }
 
         public function parse_resource_record($tag) {
-            $rrs                    = [];
-            $rrs['Name']            = (string)$tag->Name;
-            $rrs['Type']            = (string)$tag->Type;
-            $rrs['TTL']             = (string)$tag->TTL;
+            $tag = json_decode(json_encode($tag));
+
+            $rrs         = [];
+            $rrs['Name'] = $tag->Name;
+            $rrs['Type'] = $tag->Type;
+            $rrs['TTL']  = (isset($tag->TTL) ? $tag->TTL : null);
+
             $rrs['ResourceRecords'] = [];
-            foreach ($tag->ResourceRecords->ResourceRecord as $rr) {
-                $rrs['ResourceRecords'][] = (string)$rr->Value;
+            if (isset($tag->ResourceRecords->ResourceRecord)) {
+                foreach ($tag->ResourceRecords->ResourceRecord as $rr) {
+                    $rrs['ResourceRecords'][] = (isset($rr->Value) ? $rr->Value : $rr);
+                }
+            }
+
+            $rrs['Alias'] = [];
+            if (isset($tag->AliasTarget)) {
+                $rrs['Alias']                = $tag->AliasTarget;
+                $rrs['Alias']->SetIdentifier = $tag->SetIdentifier;
+                $rrs['Alias']->Weight        = $tag->Weight;
             }
 
             return $rrs;
