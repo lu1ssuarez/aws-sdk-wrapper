@@ -14,7 +14,7 @@
         protected $access_key;
         protected $secret_key;
         public    $host;
-        public    $api_version = '2010-10-01';
+        public    $api_version = '2013-04-01';
 
         /**
          * Route53 constructor.
@@ -43,10 +43,7 @@
             $request = $request->response();
 
             if ($request->error === false && $request->code !== 200) {
-                $request->error = [
-                    'code'    => $request->code,
-                    'message' => 'Unexpected HTTP status',
-                ];
+                $request->error = ['code' => $request->code, 'message' => 'Unexpected HTTP status',];
             }
 
             if ($request->error !== false) {
@@ -86,10 +83,7 @@
             $request = $request->response();
 
             if ($request->error === false && $request->code !== 200) {
-                $request->error = [
-                    'code'    => $request->code,
-                    'message' => 'Unexpected HTTP status',
-                ];
+                $request->error = ['code' => $request->code, 'message' => 'Unexpected HTTP status',];
             }
 
             if ($request->error !== false) {
@@ -118,17 +112,16 @@
             if (strlen($name) > 0) {
                 $request->set_parameter('name', $name);
             }
-            if ($maxItems != 100) {
+
+            $maxItems = (int)$maxItems;
+            if ($maxItems !== 0 && $maxItems !== 100) {
                 $request->set_parameter('maxitems', $maxItems);
             }
 
             $request = $request->response();
 
             if ($request->error === false && $request->code !== 200) {
-                $request->error = [
-                    'code'    => $request->code,
-                    'message' => 'Unexpected HTTP status',
-                ];
+                $request->error = ['code' => $request->code, 'message' => 'Unexpected HTTP status',];
             }
 
             if ($request->error !== false) {
@@ -149,12 +142,12 @@
             $response['ResourceRecordSets'] = $recordSets;
 
             if (isset($request->body->MaxItems)) {
-                $response['MaxItems'] = (string)$request->body->MaxItems;
+                $response['MaxItems'] = (int)$request->body->MaxItems;
             }
 
             if (isset($request->body->IsTruncated)) {
-                $response['IsTruncated'] = (string)$request->body->IsTruncated;
-                if ($response['IsTruncated'] == 'true') {
+                $response['IsTruncated'] = (bool)$request->body->IsTruncated;
+                if ($response['IsTruncated'] === true) {
                     $response['NextRecordName'] = (string)$request->body->NextRecordName;
                     $response['NextRecordType'] = (string)$request->body->NextRecordType;
                 }

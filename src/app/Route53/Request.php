@@ -67,10 +67,7 @@
 
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
-            curl_setopt($curl, CURLOPT_WRITEFUNCTION, [
-                &$this,
-                'response_callback',
-            ]);
+            curl_setopt($curl, CURLOPT_WRITEFUNCTION, [&$this, 'response_callback',]);
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
             switch ($this->verb) {
@@ -97,12 +94,7 @@
             if (curl_exec($curl)) {
                 $this->response->code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             } else {
-                $this->response->error = [
-                    'curl'     => true,
-                    'code'     => curl_errno($curl),
-                    'message'  => curl_error($curl),
-                    'resource' => $this->resource,
-                ];
+                $this->response->error = ['curl' => true, 'code' => curl_errno($curl), 'message' => curl_error($curl), 'resource' => $this->resource,];
             }
 
             @curl_close($curl);
@@ -110,13 +102,7 @@
             if ($this->response->error === false && isset($this->response->body)) {
                 $this->response->body = @simplexml_load_string($this->response->body);
 
-                if (!in_array($this->response->code, [
-                        200,
-                        201,
-                        202,
-                        204,
-                    ]) && isset($this->response->body->Error)
-                ) {
+                if (!in_array($this->response->code, [200, 201, 202, 204,]) && isset($this->response->body->Error)) {
                     $error                      = $this->response->body->Error;
                     $output                     = [];
                     $output['curl']             = false;

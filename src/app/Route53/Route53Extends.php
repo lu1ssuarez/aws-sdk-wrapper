@@ -56,7 +56,28 @@
             return $rrs;
         }
 
+        /**
+         * http://docs.aws.amazon.com/es_es/Route53/latest/APIReference/API_ChangeResourceRecordSets_Requests.html
+         *
+         * @param $action
+         * @param $name
+         * @param $type
+         * @param $ttl
+         * @param $records
+         *
+         * @return string
+         */
         public function prepare($action, $name, $type, $ttl, $records) {
+            $action = strtoupper($action);
+            if (!in_array($action, ['CREATE', 'DELETE', 'UPSERT',])) {
+                trigger_error('The action `' . $action . '´ is not allowed (CREATE | DELETE | UPSERT)', E_USER_WARNING);
+            }
+
+            $type = strtoupper($type);
+            if (!in_array($type, ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SPF', 'SPF', 'SRV', 'TXT'])) {
+                trigger_error('The type `' . $type . '´ is not allowed (A | AAAA | CNAME | MX | NS | PTR | SOA | SPF | SRV | TXT)', E_USER_WARNING);
+            }
+
             $change = "<Change>\n";
             $change .= '<Action>' . $action . "</Action>\n";
             $change .= "<ResourceRecordSet>\n";
