@@ -56,6 +56,15 @@
             return $rrs;
         }
 
+        public function parse_ChangeInfo($tag) {
+            $info                = [];
+            $info['Id']          = (string)$tag->Id;
+            $info['Status']      = (string)$tag->Status;
+            $info['SubmittedAt'] = (string)$tag->SubmittedAt;
+
+            return $info;
+        }
+
         /**
          * http://docs.aws.amazon.com/es_es/Route53/latest/APIReference/API_ChangeResourceRecordSets_Requests.html
          *
@@ -107,6 +116,50 @@
             $change .= "</Change>\n";
 
             return $change;
+        }
+
+        public function change_rrs($id, $changes, $comment = '') {
+            $id = trim($id, '/');
+
+            $data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+            $data .= '<ChangeResourceRecordSetsRequest xmlns="https://route53.amazonaws.com/doc/' . Route53::API_VERSION . "/\">\n";
+            $data .= "<ChangeBatch>\n";
+
+            if (strlen($comment) > 0) {
+                $data .= '<Comment>' . $comment . "</Comment>\n";
+            }
+
+            if (!is_array($changes)) {
+                $changes = [$changes];
+            }
+
+            $data .= "<Changes>\n";
+            foreach ($changes as $change) {
+                $data .= $change;
+            }
+            $data .= "</Changes>\n";
+
+            $data .= "</ChangeBatch>\n";
+            $data .= "</ChangeResourceRecordSetsRequest>\n";
+
+            $request = new Request($this, $id . '/rrset', 'POST', $data);
+
+            $request = $request->response();
+            if ($request->error === false && !in_array($request->code, [200, 201, 202, 204,])) {
+                $request->error = ['code' => $request->code, 'message' => 'Unexpected HTTP status',];
+            }
+
+            if ($request->error !== false) {
+                $this->__triggerError('change_rrs', $request->error);
+
+                return false;
+            }
+
+            if (!isset($request->body)) {
+                return [];
+            }
+
+            return $this->parse_changeInfo($request->body->ChangeInfo);
         }
 
     }
