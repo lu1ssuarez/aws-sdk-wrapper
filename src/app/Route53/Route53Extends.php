@@ -76,12 +76,13 @@
          *
          * @return string
          */
-        public function prepare($action, $name, $type, $ttl, $records) {
+        public function prepare($action, $name, $type, $ttl, array $records = []) {
             $action = strtoupper($action);
             if (!in_array($action, ['CREATE', 'DELETE', 'UPSERT',])) {
                 trigger_error('The action `' . $action . '´ is not allowed (CREATE | DELETE | UPSERT)', E_USER_WARNING);
             }
 
+            /* DOC: http://docs.aws.amazon.com/es_es/Route53/latest/DeveloperGuide/resource-record-sets-values-basic.html  */
             $type = strtoupper($type);
             if (!in_array($type, ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SPF', 'SPF', 'SRV', 'TXT'])) {
                 trigger_error('The type `' . $type . '´ is not allowed (A | AAAA | CNAME | MX | NS | PTR | SOA | SPF | SRV | TXT)', E_USER_WARNING);
@@ -94,10 +95,6 @@
             $change .= '<Type>' . $type . "</Type>\n";
             $change .= '<TTL>' . $ttl . "</TTL>\n";
             $change .= "<ResourceRecords>\n";
-
-            if (!is_array($records)) {
-                $records = [$records];
-            }
 
             foreach ($records as $record) {
                 $change .= "<ResourceRecord>\n";
@@ -118,7 +115,7 @@
             return $change;
         }
 
-        public function change_rrs($id, $changes, $comment = '') {
+        public function change_rrs($id, array $changes, $comment = '') {
             $id = trim($id, '/');
 
             $data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -127,10 +124,6 @@
 
             if (strlen($comment) > 0) {
                 $data .= '<Comment>' . $comment . "</Comment>\n";
-            }
-
-            if (!is_array($changes)) {
-                $changes = [$changes];
             }
 
             $data .= "<Changes>\n";
