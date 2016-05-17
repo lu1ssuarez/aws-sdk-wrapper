@@ -159,6 +159,27 @@
             return $response;
         }
 
+        public function get_change($id) {
+            $request = new Request($this, trim($id, '/'), 'GET');
+
+            $request = $request->response();
+            if ($request->error === false && $request->code !== 200) {
+                $request->error = ['code' => $request->code, 'message' => 'Unexpected HTTP status',];
+            }
+
+            if ($request->error !== false) {
+                $this->__triggerError('get_change', $request->error);
+
+                return false;
+            }
+
+            if (!isset($request->body)) {
+                return [];
+            }
+
+            return $this->parse_ChangeInfo($request->body->ChangeInfo);
+        }
+
         public function get_host() { return $this->host; }
 
         public function get_access_key() { return $this->access_key; }
