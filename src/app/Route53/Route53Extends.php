@@ -127,6 +127,38 @@
             return $change;
         }
 
+        public function prepare_alias($action, $name, $type, $HostedZoneId, $DNSName, $SetIdentifier, $EvaluateTargetHealth = true, $Weight = 0, array $records = []) {
+            $action = strtoupper($action);
+            if (!in_array($action, ['CREATE', 'DELETE', 'UPSERT',])) {
+                trigger_error('The action `' . $action . '´ is not allowed (CREATE | DELETE | UPSERT)', E_USER_WARNING);
+            }
+
+            /* DOC: http://docs.aws.amazon.com/es_es/Route53/latest/DeveloperGuide/resource-record-sets-values-basic.html  */
+            $type = strtoupper($type);
+            if (!in_array($type, ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SPF', 'SPF', 'SRV', 'TXT'])) {
+                trigger_error('The type `' . $type . '´ is not allowed (A | AAAA | CNAME | MX | NS | PTR | SOA | SPF | SRV | TXT)', E_USER_WARNING);
+            }
+
+            $change = "<Change>\n";
+            $change .= "<Action>" . $action . "</Action>\n";
+            $change .= "<ResourceRecordSet>\n";
+            $change .= "    <Name>" . $name . "</Name>\n";
+            $change .= "    <Type>" . $type . "</Type>\n";
+            $change .= "    <SetIdentifier>" . $SetIdentifier . "</SetIdentifier>\n";
+            $change .= "    <Weight>" . $Weight . "</Weight>\n";
+
+            $change .= "    <AliasTarget>\n";
+            $change .= "        <HostedZoneId>" . $HostedZoneId . "</HostedZoneId>\n";
+            $change .= "        <DNSName>" . $DNSName . "</DNSName>\n";
+            $change .= "        <EvaluateTargetHealth>" . $EvaluateTargetHealth . "</EvaluateTargetHealth>\n";
+            $change .= "    </AliasTarget>\n";
+
+            $change .= "</ResourceRecordSet>\n";
+            $change .= "</Change>\n";
+
+            return $change;
+        }
+        
         public function change_rrs($id, array $changes, $comment = '') {
             $id = trim($id, '/');
 
