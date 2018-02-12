@@ -1,16 +1,14 @@
 <?php
 
-    namespace Lu1sSuarez\AWS\Facades;
+namespace Lu1sSuarez\AWS\Facades;
 
-    use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Facade;
 
     /**
-     * Class SDKFacade
-     *
-     * @package Lu1sSuarez\AWS\Facades
+     * Class SDKFacade.
      */
-    class Route53 extends Facade {
-
+    class Route53 extends Facade
+    {
         /**
          * Get the registered name of the component.
          *
@@ -18,8 +16,8 @@
          *
          * @method \Lu1sSuarez\AWS\Http\Controller\Route53 get_access_key()
          */
-        protected static function getFacadeAccessor() {
+        protected static function getFacadeAccessor()
+        {
             return 'route53';
         }
-
     }
